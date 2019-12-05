@@ -6,17 +6,17 @@ input = input()
 data = input.split(',')
 
 #Main proccessor
-def process(in):
-  for i in range(0, len(in), 4):
-    opcode = in[i]
-    val1, val2 = data[data[index + 1]], data[data[index + 1]]
+def process(inp):
+  for i in range(0, len(inp), 4):
+    opcode = inp[i]
+    val1, val2 = inp[inp[index + 1]], inp[inp[index + 1]]
     if opcode == 99:
-      return data[0]
+      return inp[0]
     elif opcode == 1:
-      data[data[i + 3]] = val1 + val2
+      inp[inp[i + 3]] = val1 + val2
     elif opcode == 2:
-      data[data[i + 3]] = val1 * val2
-    return data[0]
+      inp[inp[i + 3]] = val1 * val2
+    return inp[0]
   
 #Running
 result = process(data)
