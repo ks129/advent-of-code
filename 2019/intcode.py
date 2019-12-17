@@ -1,94 +1,79 @@
-from enum import IntEnum
-
-class OPCode(IntEnum):
-  add = 1
-  multi = 2
-  input = 3
-  output = 4
-  jump_true = 5
-  jump_false = 6
-  less = 7
-  equal = 8
-  inc_rl = 9
-  halt = 99
+from collections import deque
 
 class IntCode:
-  def __init__(self, memory, ph=None):
-    self.memory = memory
-    self.memory.extend([0] * 999999)
-    self.relative = 0
+  def __init__(self, data, input=[]):
+    self.memory = data
+    self.input = deque(input)
     self.counter = 0
-    self.intput = []
+    self.relative = 0
     self.outputs = []
-    if ph:
-      self.sparam(1, ph)
-      self.counter += 2
+    self.halted = False
+    self.need_input = False
+    self.memory.extend([0] * 99999)
 
-  def start(self, intput):
-    if intput is not None:
-      self.intput.append(intput)
+  def add_input(self, input):
+    self.need_input = False
+    self.input.append(input)
 
-    while self.memory[self.counter] != OPCode.halt:
-      op = self.memory[self.counter] % 100
-
-      if len(str(op)) == 2:
-        op = int(str(op)[len(str(op)) - 1])
-
-      if op == OPCode.add:
-        self.sparam(3, self.param(1) + self.param(2))
-        self.counter += 4
-      elif op == OPCode.multi:
-        self.sparam(3, self.param(1) * self.param(2))
-        self.counter += 4
-      elif op == OPCode.input:
-        if len(self.intput) == 0:
-          return
-        a = self.intput.pop(0)
-        self.sparam(1, int(a))
-        self.counter += 2
-      elif op == OPCode.output:
-        out = int(self.param(1))
-        self.counter += 2
-        self.outputs.append(out)
-      elif op == OPCode.jump_true:
-        if self.param(1):
-          self.counter = self.param(2)
-        else:
-          self.counter += 3
-      elif op == OPCode.jump_false:
-        if not self.param(1):
-          self.counter = self.param(2)
-        else:
-          self.counter += 3
-      elif op == OPCode.less:
-        self.sparam(3, self.param(1) < self.param(2))
-        self.counter += 4
-      elif op == OPCode.equal:
-        self.sparam(3, self.param(1) == self.param(2))
-        self.counter += 4
-      elif op == OPCode.inc_rl:
-        self.relative += self.param(1)
-        self.counter += 2
-    return self.outputs[0]
-
-  @property
   def run(self):
-    return self.memory[self.counter] != 99
+    while self.memory[self.counter] != 99:
+      opcode = self.memory[self.counter] % 100
 
-  def param(self, val):
-    if self.mode(val) == 2:
-      return self.memory[self.relative + self.memory[self.counter + val]]
-    elif self.mode(val) == 1:
-      return self.memory[self.counter + val]
-    else:
-      return self.memory[self.memory[self.counter + val]]
+      if opcode == 1:
+        self.set_value(3, self.get_value(1) + self.get_value(2))
+        self.counter += 4
+      elif opcode == 2:
+        self.set_value(3, self.get_value(1) * self.get_value(2))
+        self.counter += 4
+      elif opcode == 3:
+        if len(self.input) == 0:
+          self.need_input = True
+          break
+        self.set_value(1, self.input.popleft())
+        self.counter += 2
+      elif opcode == 4:
+        self.outputs.append(self.get_value(1))
+        self.counter += 2
+      elif opcode == 5:
+        if self.get_value(1):
+          self.counter = self.get_value(2)
+        else:
+          self.counter += 3
+      elif opcode == 6:
+        if not self.get_value(1):
+          self.counter = self.get_value(2)
+        else:
+          self.counter += 3
+      elif opcode == 7:
+        self.set_value(3, int(self.get_value(1) < self.get_values(2)))
+        self.counter += 4
+      elif opcode == 8:
+        self.set_value(3, int(self.get_value(1) == self.get_value(2)))
+        self.counter += 4
+      elif opcode == 9:
+        self.relative += self.get_value(1)
+        self.counter += 2
+      else:
+        print(f'Invalid OPCode {opcode}')
+        break
+    if not self.need_input:
+      self.halted = True
 
-  def sparam(self, loc, val):
-    if self.mode(loc) == 2:
-      self.memory[self.relative + self.memory[self.counter + loc]] = val
-    elif self.mode(loc) == 1:
-      self.memory[self.counter + loc] = val
+  def get_mode(self, val):
+    return (self.memory[self.counter] // (10**(val + 1))) % 10
+
+  def set_value(self, location, val):
+    if self.get_mode(location) == 2:
+      self.memory[self.relative+self.memory[self.counter+location]] = val
+    elif self.get_mode(location) == 1:
+      self.memory[self.counter+location] = val
     else:
-      self.memory[self.memory[self.counter + loc]] = val
-  def mode(self, val):
-    return (self.memory[self.counter] // (10 ** (val + 1))) % 10
+      self.memory[self.memory[self.counter+location]] = val
+
+  def get_value(self, location):
+    if self.get_mode(location) == 2:
+      return self.memory[self.relative+self.memory[self.counter+location]]
+    elif self.get_mode(location) == 1:
+      return self.memory[self.counter+location]
+    else:
+      return self.memory[self.memory[self.counter+location]]
