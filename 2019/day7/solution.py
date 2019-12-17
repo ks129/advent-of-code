@@ -2,7 +2,7 @@
 import itertools
 
 #IntCode Computer import
-from intcode import IntCode
+from ..intcode import IntCode
 
 #Part 1 Runner
 def run1(data):
