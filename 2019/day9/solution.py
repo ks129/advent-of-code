@@ -1,14 +1,20 @@
+#Import IntCode Computer
 from ..intcode import IntCode
 
+#Collect puzzle input
 inp = input('Insert your puzzle input:')
 
+#Generate list of data
 data = list(map(int, inp.split(',')))
 
-r1 = IntCode(data.copy())
-r2 = IntCode(data.copy())
+#Creating IntCode Computers
+r1 = IntCode(data.copy(), [1])
+r2 = IntCode(data.copy(), [2])
 
-out1 = r1.start(1)
-out2 = r2.start(2)
+#Running IntCode Computers
+p1 = r1.run()
+p1 = r2.run()
 
-print(f'Part 1 result is {out1}')
-print(f'Part 2 result is {out2}')
+#Printing outputs
+print(f'Part 1 result is {p1}')
+print(f'Part 2 result is {p2}')
