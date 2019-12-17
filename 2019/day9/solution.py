@@ -12,8 +12,12 @@ r1 = IntCode(data.copy(), [1])
 r2 = IntCode(data.copy(), [2])
 
 #Running IntCode Computers
-p1 = r1.run()
-p1 = r2.run()
+r1.run()
+r2.run()
+
+#Getting outputs
+p1 = r1.outputs[-1]
+p2 = r2.outputs[-1]
 
 #Printing outputs
 print(f'Part 1 result is {p1}')
