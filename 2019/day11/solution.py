@@ -1,4 +1,5 @@
-from intcode import IntCode
+#Importing
+from ..intcode import IntCode
 from collections import defaultdict
 from PIL import Image
 
