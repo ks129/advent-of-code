@@ -1,5 +1,5 @@
 #Importing standart IntCode VM
-from intcode import IntCode
+from ..intcode import IntCode
 
 #Getting Special IntCode Computer values
 def get_values(data, vals, counter, relative):
