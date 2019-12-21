@@ -6,9 +6,10 @@ class IntCode:
     self.input = deque(input)
     self.counter = 0
     self.relative = 0
-    self.outputs = []
+    self.outputs = deque()
     self.halted = False
     self.need_input = False
+
     self.memory.extend([0] * 99999)
 
   def add_input(self, input):
@@ -45,7 +46,7 @@ class IntCode:
         else:
           self.counter += 3
       elif opcode == 7:
-        self.set_value(3, int(self.get_value(1) < self.get_values(2)))
+        self.set_value(3, int(self.get_value(1) < self.get_value(2)))
         self.counter += 4
       elif opcode == 8:
         self.set_value(3, int(self.get_value(1) == self.get_value(2)))
@@ -77,3 +78,6 @@ class IntCode:
       return self.memory[self.counter+location]
     else:
       return self.memory[self.memory[self.counter+location]]
+
+  def output(self):
+    return self.outputs.popleft()
