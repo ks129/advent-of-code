@@ -1,39 +1,40 @@
-import re
+CHARS_MAPPING = {
+    "(": 1,
+    ")": -1,
+}
 
-#Getting puzzle input
-print('Insert your puzzle input:')
-inp = input()
 
-#Part 1 Generator
-def part1(inp):
-    #Finding counts
-    o = re.findall(r'\(', inp)
-    c = re.findall(r'\)', inp)
+def load_input() -> str:
+    """Load input string from 'input.txt'."""
+    with open('input.txt') as f:
+        return f.read()
 
-    result = len(o) - len(c)
-    return result
 
-#Part 2 Generator
-def part2(inp):
-    characters = 0
+def part_one(inp: str) -> int:
+    """
+    Solves part 1 of 2015 day 1 puzzle.
+
+    Task is find on what floor santa have to go. `(` means 1 floor up and `(` means 1 floor down.
+    """
+    return inp.count('(') - inp.count(')')
+
+
+def part_two(inp: str) -> int:
+    """
+    Solves part 2 of 2015 day 1 puzzle.
+
+    Task is find at what position is character that commads santa to go to floor -1 (basement).
+    """
     floor = 0
-    basement = False
-    for i in inp:
-        if i == '(':
-            floor += 1
-        elif i == ')':
-            floor -= 1
-        characters += 1
-        if floor < 0:
-            if not basement:
-                basement = True
-                break
-    return characters
+    for i, char in enumerate(inp, 1):
+        floor += CHARS_MAPPING[char]
+        if floor == -1:
+            return i
 
-#Running funcs
-p1 = part1(inp)
-p2 = part2(inp)
 
-#Printing results
-print(f'Part 1 result is {p1}')
-print(f'Part 2 result is {p2}')
+if __name__ == "__main__":
+    data = load_input()
+    print("2015, Day 1, Part 1 solution:")
+    print(part_one(data))
+    print("2015, Day 1, Part 2 solution:")
+    print(part_two(data))
