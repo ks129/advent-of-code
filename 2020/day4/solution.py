@@ -75,6 +75,14 @@ def part_two(inp: t.List[t.Dict[str, str]]) -> int:
     valid_amount = 0
     for passport in inp:
         checks = {key: bool(constraint.fullmatch(passport[key])) for key, constraint in CONSTRAINTS.items()}
+        for key, constraint in CONSTRAINTS.items():
+            result = bool(constraint.fullmatch(passport[key]))
+            checks[key] = result
+
+            # For optimisation
+            if not result:
+                break
+
         if all(checks.values()):
             valid_amount += 1
     return valid_amount
