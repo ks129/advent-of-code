@@ -14,7 +14,7 @@ def part_one(inp: t.List[t.List[str]]) -> int:
     Task is finding how many "yes"-es is in input total.
     Every unique character in group is one yes.
     """
-    return sum(len(set("".join(g.replace("\n", "") for g in group))) for group in inp)
+    return sum(len(set("".join(group))) for group in inp)
 
 
 def part_two(inp: t.List[t.List[str]]) -> int:
