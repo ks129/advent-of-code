@@ -73,5 +73,7 @@ def part_two(inp: t.List[t.Tuple[str, str, int]]) -> int:
 
 if __name__ == "__main__":
     data = load_input()
+    print("2020, Day 8, Part 1 solution:")
     print(part_one(data))
+    print("2020, Day 8, Part 2 solution:")
     print(part_two(data))
